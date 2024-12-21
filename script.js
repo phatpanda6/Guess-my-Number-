@@ -14,78 +14,58 @@ console.log(document.querySelector('.guess').value);
 
 //TODO: for the ⛔️ No Number!, its occurs when we input 0. What if we wanted the game to between 0 and 20. How would we make the application work?
 
+// Initial game variables
 let secretNumber = Math.trunc(Math.random() * 20) + 1;
 let score = 20;
 let highScore = 0;
 
+// Utility functions
+const displayMessage = (message) => document.querySelector('.message').textContent = message;
+const setScore = (value) => document.querySelector('.score').textContent = value;
+const setBodyStyle = (property, value) => document.querySelector('body').style[property] = value;
+const setNumberBox = (property, value) => document.querySelector('.number').style[property] = value;
 
-document.querySelector('.check').addEventListener('click', function () {
+// Check button event listener
+document.querySelector('.check').addEventListener('click', () => {
   const guess = Number(document.querySelector('.guess').value);
   console.log(guess, typeof guess);
 
-  //When there is no Input
   if (!guess) {
-    document.querySelector('.message').textContent = '⛔️ No Number!';
-  }
-    //When player wins
-    else if (guess === secretNumber) {
-    document.querySelector('.message').textContent = '🎉 Correct Number!';
-    document.querySelector('body').style.backgroundColor = ' #60b347';
-
-    document.querySelector('.number').style.width = '30rem'
+    displayMessage('⛔️ No Number!');
+  } 
+  else if (guess === secretNumber) {
+    displayMessage('🎉 Correct Number!');
+    setBodyStyle('backgroundColor', '#60b347');
+    setNumberBox('width', '30rem');
     document.querySelector('.number').textContent = secretNumber;
-    
-    if (score > highScore) {
-        highScore = score; 
-        document.querySelector('.highscore').textContent = highScore; 
+
+    if (score > highScore) { 
+      highScore = score;
+      document.querySelector('.highscore').textContent = highScore;
     }
-
- 
-     //When guess is too high 
-  } else if (guess > secretNumber) {
+  } 
+  else {
     if (score > 1) {
-      document.querySelector('.message').textContent = '📈 Too high!';
+      displayMessage(guess > secretNumber ? '📈 Too high!' : '📉 Too low!');
       score--;
-      document.querySelector('.score').textContent = score;
+      setScore(score);
     } else {
-      document.querySelector('.message').textContent = '💥 You lost the game!';
-      document.querySelector('.score').textContent = 0;
-    }
-
-    //When guess is too low
-  } else if (guess < secretNumber) {
-    if (score > 1) {
-      document.querySelector('.message').textContent = '📉 Too low!';
-      score--;
-      document.querySelector('.score').textContent = score;
-    } else {
-      document.querySelector('.message').textContent = '💥 You lost the game!';
-
-      document.querySelector('.score').textContent = 0;
+      displayMessage('💥 You lost the game!');
+      setScore(0);
     }
   }
 });
 
-document.querySelector('.again').addEventListener('click', function(){
-    //Creates another random number
-    secretNumber = Math.trunc(Math.random() * 20) + 1;
+// Again button event listener
+document.querySelector('.again').addEventListener('click', () => {
+  secretNumber = Math.trunc(Math.random() * 20) + 1;
+  score = 20;
 
-    //Reset the score
-    score = 20; 
-    document.querySelector('.score').textContent = 20; 
+  setScore(score);
+  displayMessage('Start guessing...');
+  document.querySelector('.guess').value = '';
 
-    //Clears the input
-    document.querySelector('.guess').value = ''; 
-
-    //Resets the background
-    document.querySelector('body').style.backgroundColor = '#222'; 
-
-    //Resets the mystery number box width
-    document.querySelector('.number').style.width = '15rem';
-
-    //Resets the message 
-    document.querySelector('.message').textContent = 'Start guessing...'
-    
-    //Hides the secret number
-    document.querySelector('.number').textContent = '?';
-}); 
+  setBodyStyle('backgroundColor', '#222');
+  setNumberBox('width', '15rem');
+  document.querySelector('.number').textContent = '?';
+});
